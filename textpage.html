@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>The textarea element</h1>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $.get('http://localhost:3000/data', {}, function(data){
+            document.getElementById("notes").value = data;
+        });
+    </script>
+</head>
+
+<form action="http://localhost:3000/process_stuff" method="post">
+    <label for="w3review">Text Area:</label>
+    <textarea id="notes" name="notes" rows="4" cols="50">
+    </textarea>
+    <br><br>
+    <input type="submit" value="Submit">
+</form>
+
+<p>Click the "Submit" button and the form-data will be sent to a page on the 
+server called "action_page.php".</p>
+</body>
+</html>
+
