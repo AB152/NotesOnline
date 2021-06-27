@@ -4,7 +4,35 @@
 
 <h1>The input element</h1>
 
-<form action="http://localhost:3000/user_exists_check" method="post">
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+$(document).ready(function(e) {
+    $("#userform").on("submit",function(){
+        $.ajax({
+              url:"http://localhost:3000/user_exists_check",
+              method: "POST",
+              data : $("#userform").serialize(),
+              cache : false,
+              async: false,
+              success : function (data) {
+                  if(data){
+                      alert("User Exists!")
+                  }
+                  else{
+                    alert("User not found")
+                  }
+              },
+              error : function () {
+                  alert("Oops! Something went wrong");
+              }
+        })
+    })
+  })
+  </script>
+</head>
+
+<form id="userform">
   <label for="fname">Please enter user to find in this format: "user"</label>
   <input type="text" id="name" name="name"><br><br>
   <input type="submit" value="Submit">
