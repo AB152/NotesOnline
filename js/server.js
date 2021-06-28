@@ -3,6 +3,8 @@ const express = require('express')
 const bcrypt = require('bcrypt')
 const fs = require('fs').promises
 const {MongoClient} = require('mongodb')
+const path = require('path');
+const assert = require('assert');
 
 // App and middleware setup
 const app = express()
@@ -11,14 +13,24 @@ app.use(express.urlencoded({ extended: true }))
 
 // Port, MongoDB URI, and curuser variable for storing which user in in login session
 const port = 3000
+const htmlPath = path.join(__dirname, '/../html')
+
+// Creat MongoClient and pool connections
 const uri = "mongodb+srv://textUser:notestime@cluster0.laaax.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+const client = new MongoClient(uri, { useUnifiedTopology:true })
+client.connect(function(err) {
+    assert.strictEqual(null, err);
+    console.log("Connected successfully to server");
+});
+
+// Variable to keep track of current user in session
 var curuser = {}
 
 
 // Index page
 // First thing displayed
 app.get('/', (req, res) => {
-    fs.readFile(__dirname + "/index.html")
+    fs.readFile(htmlPath + "/index.html")
         .then(contents => {
             res.setHeader("Content-Type", "text/html")
             res.writeHead(200)
@@ -34,7 +46,7 @@ app.get('/', (req, res) => {
 // Page to find a user
 // Get to this from index.html
 app.get('/find', (req, res) => {
-    fs.readFile(__dirname + "/find.html")
+    fs.readFile(htmlPath + "/find.html")
         .then(contents => {
             res.setHeader("Content-Type", "text/html")
             res.writeHead(200)
@@ -51,7 +63,7 @@ app.get('/find', (req, res) => {
 // Display login page
 // Get to this from index.html
 app.get('/login', (req, res) => {
-    fs.readFile(__dirname + "/login.html")
+    fs.readFile(htmlPath + "/login.html")
         .then(contents => {
             res.setHeader("Content-Type", "text/html")
             res.writeHead(200)
@@ -67,7 +79,7 @@ app.get('/login', (req, res) => {
 // Display a cool looking page
 // Get to this from index.html
 app.get('/coolpage', (req, res) => {
-    fs.readFile(__dirname + "/mainpage.html")
+    fs.readFile(htmlPath + "/mainpage.html")
         .then(contents => {
             res.setHeader("Content-Type", "text/html")
             res.writeHead(200)
@@ -83,7 +95,7 @@ app.get('/coolpage', (req, res) => {
 // Display a cool looking page
 // Get to this from index.html
 app.get('/textpage', (req, res) => {
-    fs.readFile(__dirname + "/textpage.html")
+    fs.readFile(htmlPath + "/textpage.html")
         .then(contents => {
             res.setHeader("Content-Type", "text/html")
             res.writeHead(200)
@@ -99,7 +111,23 @@ app.get('/textpage', (req, res) => {
 // Page to create a user
 // Get to this from index.html
 app.get('/user_creation', (req, res) => {
-    fs.readFile(__dirname + "/user_creation.html")
+    fs.readFile(htmlPath + "/user_creation.html")
+        .then(contents => {
+            res.setHeader("Content-Type", "text/html")
+            res.writeHead(200)
+            res.end(contents)
+        })
+        .catch(err => {
+            res.writeHead(500)
+            res.end(err)
+            return
+        })
+})
+
+// Page to create a user
+// Get to this from index.html
+app.get('/db_delete', (req, res) => {
+    fs.readFile(htmlPath + "/db_delete.html")
         .then(contents => {
             res.setHeader("Content-Type", "text/html")
             res.writeHead(200)
@@ -119,15 +147,15 @@ app.post('/users', async (req, res) => {
         const salt = await bcrypt.genSalt()
         const hashedPassword = await bcrypt.hash(req.body.psw, salt)
         const user = {created_at: new Date(), name: req.body.fname, password: hashedPassword, text: ""}
-        const client = new MongoClient(uri, { useUnifiedTopology:true })
         try{
-            await client.connect()
+            //await client.connect()
             const dbuser = await client.db("users").collection("information").findOne({ name: user.name })
             if (dbuser) {
                 res.status(400).send("Username already taken, please enter another username")
             } 
             else {
                 try{
+                    //await client.connect()
                     await client.db("users").collection("information").insertOne(user)
                     await client.db("users").collection("information").createIndex(
                         { created_at: 1 },
@@ -143,7 +171,7 @@ app.post('/users', async (req, res) => {
         } catch(e){
             console.error(e)
         } finally{
-            await client.close()
+            //await client.close()
         }
     } catch {
         res.status(500).send()
@@ -155,9 +183,8 @@ app.post('/users', async (req, res) => {
 // Get to this from login.html
 app.post('/login_check', async (req, res) => {
     var reques = req.body.fname
-    const client = new MongoClient(uri, { useUnifiedTopology:true })
     try {
-        await client.connect()
+        //await client.connect()
         const user = await client.db("users").collection("information").findOne({ name: reques })
 
         if (user) {
@@ -178,7 +205,7 @@ app.post('/login_check', async (req, res) => {
     } catch(e){
         console.error(e)
     } finally{
-        await client.close()
+        //await client.close()
     }
 })
 
@@ -187,9 +214,8 @@ app.post('/login_check', async (req, res) => {
 // Get to this from find.html
 app.post('/user_exists_check', async (req, res) => {
     var name_to_check = req.body.name
-    const client = new MongoClient(uri, { useUnifiedTopology:true })
     try {
-        await client.connect()
+        //await client.connect()
         const user = await client.db("users").collection("information").findOne({ name: name_to_check })
 
         if (user) {
@@ -200,22 +226,21 @@ app.post('/user_exists_check', async (req, res) => {
     } catch(e){
         console.error(e)
     } finally{
-        await client.close()
+        //await client.close()
     }
 })
 
 // Stores user text in MongoDB
 // Get to this from textpage.html
 app.post('/process_stuff', async (req, res) => {
-    const client = new MongoClient(uri, { useUnifiedTopology:true })
     try{
-        await client.connect()
+        //await client.connect()
         await client.db("users").collection("information")
         .updateOne({ name: curuser.name }, { $set: {created_at: new Date(), text: req.body.notes} })
     } catch(e){
         console.error(e)
     } finally{
-        await client.close()
+        //await client.close()
     }
     res.redirect("/")
 })
@@ -225,37 +250,35 @@ app.post('/process_stuff', async (req, res) => {
 
 // Returns curuser to textpage.html
 app.get('/data', async (req, res) => {
-    const client = new MongoClient(uri, { useUnifiedTopology:true })
     try{
-        await client.connect()
+        //await client.connect()
         const user = await client.db("users").collection("information").findOne({ name: curuser.name })
         if (user) {
-            console.log(user)
             res.send(user.text)
         } else {
-            console.log(`No users found with the name '${reques}'`)
             res.status(400).send("Unable to find user")
         }
     } catch(e){
         console.error(e)
     } finally{
-        await client.close()
+        //await client.close()
     }
 })
 
 // Deletes all entries in MongoDB
 app.get('/delete', async (req, res) => {
-    const client = new MongoClient(uri, { useUnifiedTopology:true })
+    //const client = new MongoClient(uri, { useUnifiedTopology:true })
     try{
-        await client.connect()
+        //await client.connect()
         const user = await client.db("users").collection("information").deleteMany({})
     } catch(e){
         console.error(e)
     } finally{
-        await client.close()
+        //await client.close()
     }
     
-    res.status(201).send("Database cleared")
+    //res.status(201).send("Database cleared")
+    res.redirect("/db_delete")
 })
 
 
