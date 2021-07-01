@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <body>
 
@@ -11,5 +11,51 @@
 <p><a href="http://localhost:3000/delete">Delete entire database</a></p>
 
 </body>
-</html>
+</html> -->
 
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/styles.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function(e) {
+          $("#delete").on("click",function(){
+              $.ajax({
+                    url:"http://localhost:3000/delete",
+                    method: "GET",
+                    data : "",
+                    cache : false,
+                    async: false,
+                    success : function (data) {
+                        if(data){
+                            alert("Database Deleted!")
+                        }
+                        else{
+                          alert("Database Not Deleted")
+                        }
+                    },
+                    error : function () {
+                        alert("Oops! Something went wrong");
+                    }
+              })
+          })
+        })
+    </script>
+</head>
+
+<div class="container">
+    <h1>Welcome to Notes Online!</h1>
+    <br><br><br><br><br><br><br><br>
+    <a href="http://localhost:3000/user_creation"><div class="button button-1">Create a user</div></a>
+    <a href="http://localhost:3000/login"><div class="button button-2">Login and store a note!</div></a>
+    <a href="http://localhost:3000/find"><div class="button button-3">Find a user</div></a>
+    <a href="http://localhost:3000/coolpage"><div class="button button-4">See a cool page</div></a>
+    <div class="button button-5" id="delete">Delete entire database</div>
+    <br><br><br><br><br><br><br><br><br><br><br>
+    <h4>(Please be aware, accounts and notes are only stored for a day!)</h4>
+  </div>
+  
+  
+</html>

@@ -1,9 +1,5 @@
 <!DOCTYPE html>
 <html>
-<body>
-
-<h1>Find a user</h1>
-
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
@@ -30,20 +26,21 @@ $(document).ready(function(e) {
     })
   })
   </script>
+  <link rel="stylesheet" type="text/css" href="/find.css" />
 </head>
 
-<form id="userform">
-  <label for="fname">Please enter user to find in this format: "user"</label>
-  <input type="text" id="name" name="name"><br><br>
-  <input type="submit" value="Submit">
-</form>
+<div class="find">
+  <h1>Find a User</h1>
+  <form id="userform">
+    <input type="text" id="name" name="name" placeholder="Enter a user">
+    <input type="submit" value="Check" class="btn btn-primary btn-block btn-large">
+  </form>
+</div>
 
-<br>
 
 <form action="http://localhost:3000/">
   <button type="submit">Go back to homepage</button>  
 </form>
 
-</body>
 </html>
 

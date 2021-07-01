@@ -10,6 +10,7 @@ const assert = require('assert');
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(express.static(path.join(__dirname, '/../css')));
 
 // Port, MongoDB URI, and curuser variable for storing which user in in login session
 const port = 3000
@@ -79,7 +80,7 @@ app.get('/login', (req, res) => {
 // Display a cool looking page
 // Get to this from index.html
 app.get('/coolpage', (req, res) => {
-    fs.readFile(htmlPath + "/mainpage.html")
+    fs.readFile(htmlPath + "/cool_page.html")
         .then(contents => {
             res.setHeader("Content-Type", "text/html")
             res.writeHead(200)
@@ -148,19 +149,17 @@ app.post('/users', async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.psw, salt)
         const user = {created_at: new Date(), name: req.body.fname, password: hashedPassword, text: ""}
         try{
-            //await client.connect()
             const dbuser = await client.db("users").collection("information").findOne({ name: user.name })
             if (dbuser) {
                 res.status(400).send("Username already taken, please enter another username")
             } 
             else {
                 try{
-                    //await client.connect()
                     await client.db("users").collection("information").insertOne(user)
                     await client.db("users").collection("information").createIndex(
                         { created_at: 1 },
-                        { expireAfterSeconds: 60 }
-                      )
+                        { expireAfterSeconds: 86400 }
+                    )
 
                     res.redirect("/")
 
@@ -170,8 +169,6 @@ app.post('/users', async (req, res) => {
             }
         } catch(e){
             console.error(e)
-        } finally{
-            //await client.close()
         }
     } catch {
         res.status(500).send()
@@ -184,7 +181,6 @@ app.post('/users', async (req, res) => {
 app.post('/login_check', async (req, res) => {
     var reques = req.body.fname
     try {
-        //await client.connect()
         const user = await client.db("users").collection("information").findOne({ name: reques })
 
         if (user) {
@@ -204,8 +200,6 @@ app.post('/login_check', async (req, res) => {
         }
     } catch(e){
         console.error(e)
-    } finally{
-        //await client.close()
     }
 })
 
@@ -215,7 +209,6 @@ app.post('/login_check', async (req, res) => {
 app.post('/user_exists_check', async (req, res) => {
     var name_to_check = req.body.name
     try {
-        //await client.connect()
         const user = await client.db("users").collection("information").findOne({ name: name_to_check })
 
         if (user) {
@@ -225,22 +218,18 @@ app.post('/user_exists_check', async (req, res) => {
         }
     } catch(e){
         console.error(e)
-    } finally{
-        //await client.close()
     }
 })
 
 // Stores user text in MongoDB
 // Get to this from textpage.html
 app.post('/process_stuff', async (req, res) => {
+    console.log("went here")
     try{
-        //await client.connect()
         await client.db("users").collection("information")
         .updateOne({ name: curuser.name }, { $set: {created_at: new Date(), text: req.body.notes} })
     } catch(e){
         console.error(e)
-    } finally{
-        //await client.close()
     }
     res.redirect("/")
 })
@@ -251,7 +240,6 @@ app.post('/process_stuff', async (req, res) => {
 // Returns curuser to textpage.html
 app.get('/data', async (req, res) => {
     try{
-        //await client.connect()
         const user = await client.db("users").collection("information").findOne({ name: curuser.name })
         if (user) {
             res.send(user.text)
@@ -260,25 +248,17 @@ app.get('/data', async (req, res) => {
         }
     } catch(e){
         console.error(e)
-    } finally{
-        //await client.close()
     }
 })
 
 // Deletes all entries in MongoDB
 app.get('/delete', async (req, res) => {
-    //const client = new MongoClient(uri, { useUnifiedTopology:true })
     try{
-        //await client.connect()
         const user = await client.db("users").collection("information").deleteMany({})
     } catch(e){
         console.error(e)
-    } finally{
-        //await client.close()
     }
-    
-    //res.status(201).send("Database cleared")
-    res.redirect("/db_delete")
+    res.send(true)
 })
 
 

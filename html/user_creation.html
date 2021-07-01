@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 
 <body>
@@ -14,7 +14,7 @@
     <label for="psw"><b>Password</b></label>
     <input type="password" placeholder="Enter Password" name="psw" required>
         
-    <button type="submit">Login</button>
+    <button type="submit">Create</button>
 
   </div>
 
@@ -27,5 +27,27 @@
 </form>
 
 </body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/user_creation.css" />
+</head>
+<div class="login">
+  <h1>Account Creation</h1>
+    <form action="http://localhost:3000/users" method="post">
+        <input type="text" placeholder="Enter Username" name="fname" required />
+        <input type="password" placeholder="Enter Password" name="psw" required />
+        <button type="submit" class="btn btn-primary btn-block btn-large">Create User</button>
+    </form>
+</div>
+<form action="http://localhost:3000/">
+  <button type="submit">Go back to homepage</button>  
+</form>
 </html>
+
+
+
 
