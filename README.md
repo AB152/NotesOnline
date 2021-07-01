@@ -6,11 +6,15 @@ Before running the project, please be sure to install both node.js (https://node
 
 ## Installing dependencies and building the project
 1. Create and save an empty folder somewhere on your computer.
-2. Fork this repository and clone it into the folder.
-3. Open a terminal or bash (possibly through your code editor) and proceed to navigate the terminal into the folder you created.
-4. Type ``` npm install ```.
-5. Press enter.
-6. Type ``` npm run devStart ```.
-7. Open a browser and navigate to http://localhost:3000/.
-8. That's all!
+2. Open a terminal or bash (possibly through your code editor) and proceed to navigate the terminal into the folder you created.
+3. Clone this repository into the folder by typing:
+``` git clone https://github.com/AB152/NotesOnline.git ```
+4. Press enter.
+5. Type ``` npm install ```.
+6. Press enter.
+7. Type ``` npm run devStart ```.
+8. Press enter.
+9. Open a browser and type in http://localhost:3000/.
+10. Press enter.
+11. That's all! You should now be at the home page where 5 buttons are displayed.
 
