@@ -2,7 +2,6 @@
 <html>
 <body>
 
-
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
@@ -30,8 +29,6 @@
 
         });
         $.get('http://localhost:3000/data', {}, function(data){
-            console.log("data")
-            console.log(data)
             $("#notes").val(data);
         })
     })
@@ -39,13 +36,6 @@
     <link rel="stylesheet" type="text/css" href="/text_page.css" />
 </head>
 
-<!-- <form action="http://localhost:3000/process_stuff" method="post">
-    <label for="w3review">Text Area:</label>
-    <textarea class="md-textarea form-control" id="notes" name="notes" rows="4" cols="50">
-    </textarea>
-    <br><br>
-    <input type="submit" value="Submit">
-</form> -->
 <div class="wrapper">
     <h1>Welcome!</h1>
     <form action="http://localhost:3000/process_stuff" method="post">

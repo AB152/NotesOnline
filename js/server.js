@@ -16,12 +16,12 @@ app.use(express.static(path.join(__dirname, '/../css')));
 const port = 3000
 const htmlPath = path.join(__dirname, '/../html')
 
-// Creat MongoClient and pool connections
+// Create MongoClient and pool connections
 const uri = "mongodb+srv://textUser:notestime@cluster0.laaax.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 const client = new MongoClient(uri, { useUnifiedTopology:true })
 client.connect(function(err) {
     assert.strictEqual(null, err);
-    console.log("Connected successfully to server");
+    console.log("Connected successfully to Mongo server");
 });
 
 // Variable to keep track of current user in session
@@ -151,7 +151,7 @@ app.post('/users', async (req, res) => {
         try{
             const dbuser = await client.db("users").collection("information").findOne({ name: user.name })
             if (dbuser) {
-                res.status(400).send("Username already taken, please enter another username")
+                res.status(400).send("error1")
             } 
             else {
                 try{
@@ -160,8 +160,9 @@ app.post('/users', async (req, res) => {
                         { created_at: 1 },
                         { expireAfterSeconds: 86400 }
                     )
+                    res.status(200).send()
 
-                    res.redirect("/")
+                    //res.redirect("/")
 
                 } catch(e){
                     console.error(e)
@@ -182,21 +183,23 @@ app.post('/login_check', async (req, res) => {
     var reques = req.body.fname
     try {
         const user = await client.db("users").collection("information").findOne({ name: reques })
-
         if (user) {
             try{
                 if(await bcrypt.compare(req.body.psw, user.password)){
                     curuser = {name: user.name}
-                    res.redirect("/textpage")
+                    //res.redirect("/textpage")
+                    res.status(200).send()
                 }
                 else{
-                    res.send("Please check username and password and try again")
+                    //res.send("Wrong password")
+                    res.status(500).send('showAlert')
                 }
             } catch {
                 res.status(500).send()
             }
         } else {
-            res.send(`No users found with the name '${reques}'`)
+            //res.send("No user found")
+            res.status(500).send('random')
         }
     } catch(e){
         console.error(e)
@@ -224,7 +227,6 @@ app.post('/user_exists_check', async (req, res) => {
 // Stores user text in MongoDB
 // Get to this from textpage.html
 app.post('/process_stuff', async (req, res) => {
-    console.log("went here")
     try{
         await client.db("users").collection("information")
         .updateOne({ name: curuser.name }, { $set: {created_at: new Date(), text: req.body.notes} })
@@ -257,6 +259,7 @@ app.get('/delete', async (req, res) => {
         const user = await client.db("users").collection("information").deleteMany({})
     } catch(e){
         console.error(e)
+        res.send(false)
     }
     res.send(true)
 })
@@ -266,5 +269,5 @@ app.get('/delete', async (req, res) => {
 
 // Specifies which localhost port to use
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`App listening at http://localhost:${port}`)
 })
